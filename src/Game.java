@@ -1,26 +1,33 @@
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-
 public class Game {
     Board board;
+    boolean canMove;
     public Game(Board board) {
         this.board = board;
-    }
-    public void keyTyped(KeyEvent e) {
-
     }
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
         Snake head = Board.sn.getFirst();
-
-        switch (key) {
-            case KeyEvent.VK_LEFT -> head.direction = Snake.Direction.LEFT;
-            case KeyEvent.VK_RIGHT -> head.direction = Snake.Direction.RIGHT;
-            case KeyEvent.VK_UP -> head.direction = Snake.Direction.UP;
-            case KeyEvent.VK_DOWN -> head.direction = Snake.Direction.DOWN;
+        if (canMove && head.health == Snake.Health.ALIVE) {
+            switch (key) {
+                case KeyEvent.VK_LEFT -> {
+                    if (head.direction != Snake.Direction.STILL && head.direction != Snake.Direction.RIGHT)
+                        head.direction = Snake.Direction.LEFT;
+                    canMove = false;
+                }
+                case KeyEvent.VK_RIGHT -> {
+                    if (head.direction != Snake.Direction.LEFT) head.direction = Snake.Direction.RIGHT;
+                    canMove = false;
+                }
+                case KeyEvent.VK_UP -> {
+                    if (head.direction != Snake.Direction.DOWN) head.direction = Snake.Direction.UP;
+                    canMove = false;
+                }
+                case KeyEvent.VK_DOWN -> {
+                    if (head.direction != Snake.Direction.UP) head.direction = Snake.Direction.DOWN;
+                    canMove = false;
+                }
+            }
         }
-    }
-    public void keyReleased(KeyEvent e) {
-
     }
 }

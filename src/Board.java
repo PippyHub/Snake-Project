@@ -17,7 +17,7 @@ public class Board extends JPanel implements ActionListener, KeyListener {
         addKeyListener(this);
         setFocusable(true);
         snakeList(4,7, Snake.Type.HEAD);
-        Timer timer = new Timer(100, this);
+        Timer timer = new Timer(120, this);
         timer.start();
     }
     public static void snakeList(int sX, int sY, Snake.Type type) {
@@ -52,24 +52,22 @@ public class Board extends JPanel implements ActionListener, KeyListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Snake head = sn.getFirst();
+        head.collide();
         switch (head.direction) {
             case LEFT -> head.sX--;
             case RIGHT -> head.sX++;
             case UP -> head.sY--;
             case DOWN -> head.sY++;
         }
+        game.canMove = true;
         repaint();
     }
     @Override
-    public void keyTyped(KeyEvent e) {
-        game.keyTyped(e);
-    }
+    public void keyTyped(KeyEvent e) {}
     @Override
     public void keyPressed(KeyEvent e) {
         game.keyPressed(e);
     }
     @Override
-    public void keyReleased(KeyEvent e) {
-        game.keyReleased(e);
-    }
+    public void keyReleased(KeyEvent e) {}
 }
