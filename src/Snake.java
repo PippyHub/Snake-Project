@@ -9,9 +9,6 @@ public class Snake {
     enum Health {
         ALIVE, DEAD
     }
-    static final int SQR_SIZE = Board.SQR_SIZE;
-    static final int BOARD_WIDTH = Board.BOARD_WIDTH;
-    static final int BOARD_HEIGHT = Board.BOARD_HEIGHT;
     int sX, sY;
     LinkedList<Snake> sn;
     Type type;
@@ -28,6 +25,7 @@ public class Snake {
     }
     public void move() {
         snakeCollide();
+        tailCollide();
         appleCollide(Board.apple);
         if (direction != Direction.STILL) {
             for (int i = length - 1; i > 0; i--) {
@@ -54,6 +52,17 @@ public class Snake {
             Game.canMove = false;
             health = Health.DEAD;
             direction = Direction.STILL;
+        }
+    }
+    public void tailCollide() {
+        for (int i = 1; i < length; i++) {
+            Snake segment = sn.get(i);
+            if (sX == segment.sX && sY == segment.sY) {
+                health = Health.DEAD;
+                direction = Direction.STILL;
+                Game.canMove = false;
+                break;
+            }
         }
     }
     public boolean snakeCollision() {
