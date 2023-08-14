@@ -12,7 +12,7 @@ public class Snake {
     static final int SQR_SIZE = Board.SQR_SIZE;
     static final int BOARD_WIDTH = Board.BOARD_WIDTH;
     static final int BOARD_HEIGHT = Board.BOARD_HEIGHT;
-    int x, y, sX, sY;
+    int sX, sY;
     LinkedList<Snake> sn;
     Type type;
     Direction direction = Direction.STILL;
@@ -26,26 +26,52 @@ public class Snake {
         sn.add(this);
         length++;
     }
-    public void collide() {
-        if (collision()) {
-            System.out.println(true);
-            health = Health.DEAD;
-            switch (direction) {
-                case UP -> sY = 0;
-                case DOWN -> sY = BOARD_HEIGHT;
-                case LEFT -> sX = 0;
-                case RIGHT -> sX = BOARD_WIDTH;
+    public void move() {
+        snakeCollide();
+        appleCollide(Board.apple);
+        if (direction != Direction.STILL) {
+            for (int i = length - 1; i > 0; i--) {
+                Snake current = sn.get(i);
+                Snake previous = sn.get(i - 1);
+                current.sX = previous.sX;
+                current.sY = previous.sY;
             }
+            switch (direction) {
+                case LEFT -> sX--;
+                case RIGHT -> sX++;
+                case UP -> sY--;
+                case DOWN -> sY++;
+            }
+        }
+        Game.canMove = true;
+    }
+    public void snakeCollide() {
+        if (snakeCollision()) {
+            switch (direction) {
+                case UP, DOWN -> sY = (direction == Direction.UP) ? 0 : 14;
+                case LEFT, RIGHT -> sX = (direction == Direction.LEFT) ? 0 : 16;
+            }
+            Game.canMove = false;
+            health = Health.DEAD;
             direction = Direction.STILL;
         }
     }
-    public boolean collision() {
+    public boolean snakeCollision() {
         return switch (direction) {
             case LEFT -> this.sX < 0;
-            case RIGHT -> this.sX + SQR_SIZE > BOARD_WIDTH / SQR_SIZE;
+            case RIGHT -> this.sX > 16;
             case UP -> this.sY < 0;
-            case DOWN -> this.sY + SQR_SIZE > BOARD_HEIGHT / SQR_SIZE;
+            case DOWN -> this.sY > 14;
             case STILL -> false;
         };
+    }
+    public void appleCollide(Apple apple) {
+        if (appleCollision(apple)) {
+            new Snake(sn.getLast().sX, sn.getLast().sY, Snake.Type.TAIL, sn);
+            Board.appleNew();
+        }
+    }
+    public boolean appleCollision(Apple apple) {
+        return apple.aX == sX && apple.aY == sY;
     }
 }

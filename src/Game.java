@@ -1,13 +1,20 @@
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 public class Game {
     Board board;
-    boolean canMove;
+    static boolean canMove;
     public Game(Board board) {
         this.board = board;
+    }
+    public void actionPerformed() {
+        Snake head = Board.sn.getFirst();
+        head.move();
+        board.repaint();
     }
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
         Snake head = Board.sn.getFirst();
+        head.snakeCollide();
         if (canMove && head.health == Snake.Health.ALIVE) {
             switch (key) {
                 case KeyEvent.VK_LEFT -> {
